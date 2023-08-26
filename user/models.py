@@ -6,3 +6,7 @@ class CustomUser(AbstractUser):
     phone = models.CharField(max_length=13)
     active = models.BooleanField(default=True)
     role = models.CharField(max_length=20, default="user")
+
+
+class Test(models.Model):
+    name = models.CharField(max_length=100)
