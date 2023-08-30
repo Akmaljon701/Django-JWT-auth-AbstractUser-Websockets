@@ -45,9 +45,9 @@ class IsmView(APIView):
 
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
-                "ism_group",  # WebSocket guruhi nomi
+                "ism_group",  # WebSocket guruhi nomi (shu bo'yicha consumersdan qaysi websocketga jo'natish ajratib olinadi)
                 {
-                    "type": "add_new_ism",
+                    "type": "add_new_ism",   # wensocket tomindagi yangi malumot kelganini qabul qilib oladigan funksiya
                 },
             )
 

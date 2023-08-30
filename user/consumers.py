@@ -12,20 +12,20 @@ class IsmlarConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
         await self.channel_layer.group_add("ism_group", self.channel_name)
-        await self.send_initial_ism_list()
+        await self.send_initial_ism_list()    # 1-martta Connect bo'lganda hamma malumotlar chiqishi
 
     async def disconnect(self, close_code):
-        pass
+        await self.channel_layer.group_discard("ism_group", self.channel_name)   # Connectlarni tugatish uchun
 
     async def send_initial_ism_list(self):
-        ism_list = await self.get_ism_list()
+        ism_list = await self.get_ism_list()  # funksiya bo'yicha malumotlarni yuborish
         await self.send(text_data=json.dumps(ism_list))
 
-    async def add_new_ism(self, event):
+    async def add_new_ism(self, event):       # yangi malumot kelsa event qabul qiladi va shu yerdan yangi malumotlar yuboriladi
         await self.send_initial_ism_list()
 
     @sync_to_async
-    def get_ism_list(self):
+    def get_ism_list(self):        # ko'p joyda fodalanish uchun umumiy finksiya
         ism_objects = Ism.objects.all().order_by('-id')
         serializer = IsmSerializer(ism_objects, many=True)
         return serializer.data

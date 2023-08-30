@@ -47,11 +47,11 @@ INSTALLED_APPS = [
     'chat'
 ]
 
-ASGI_APPLICATION = "medlandDjango.asgi.application"
+ASGI_APPLICATION = "medlandDjango.asgi.application"   # asgi ni ishga tushrish
 
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'   # asinxron kanallarni boshqarish uchun
     }
 }
 
