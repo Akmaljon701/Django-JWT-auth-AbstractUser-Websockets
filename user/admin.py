@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import *
 
 
 class CustomUserAdmin(UserAdmin):
@@ -12,3 +12,10 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
+
+
+class IsmAdmin(admin.ModelAdmin):
+    list_display = ['name']  # Ko'rsatiladigan maydonlar ro'yxati
+
+
+admin.site.register(Ism, IsmAdmin)

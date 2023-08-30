@@ -1,16 +1,14 @@
+from asgiref.sync import async_to_sync
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
-import json
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
-from channels.generic.websocket import AsyncWebsocketConsumer
 
-from .models import *
+from .consumers import IsmlarConsumer
+from channels.layers import get_channel_layer
 from .serializers import *
 
 
@@ -38,4 +36,21 @@ class CustomUserView(APIView):
                             status=status.HTTP_403_FORBIDDEN)
 
 
+class IsmView(APIView):
+    @swagger_auto_schema(request_body=IsmSerializer)
+    def post(self, request):
+        serializer = IsmSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                "ism_group",  # WebSocket guruhi nomi
+                {
+                    "type": "add_new_ism",
+                },
+            )
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, include
 from user.views import *
 from .swagger import schema_view
 
@@ -17,5 +17,9 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token_refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
+    path('ism_create/', IsmView.as_view(), name='ism'),
+
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+
+    path('', include('chat.urls')),
 ]
