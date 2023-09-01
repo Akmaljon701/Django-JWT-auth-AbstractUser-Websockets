@@ -26,24 +26,29 @@ SECRET_KEY = 'django-insecure-=9%ael$jbq8#adbc_#urqml(-dil^v!@eil7o)dvvidw^l^q8l
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
-    'jazzmin',
+    'jazzmin',                                # jazzmin-admin
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',                          # rest api
+    'channels',                                # websocket
+    'drf_yasg',                                # swagger
+    'rest_framework_simplejwt',                # jwt auth
+    'django_cleanup.apps.CleanupConfig',       # media auto delete uchun
+    'corsheaders',                             # brauzerlar o'rtasida boshqa domenlardan so'rovlarni qo'shish
+
+    # apps
     'user',
-    'rest_framework_simplejwt',
-    'drf_yasg',
-    'rest_framework',
     'chat'
 ]
 
@@ -63,9 +68,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',                 # CORE uchun
 ]
 
 ROOT_URLCONF = 'medlandDjango.urls'
+
+CORS_ALLOW_ALL_ORIGINS = True                                # CORE uchun
 
 TEMPLATES = [
     {
@@ -131,7 +140,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static/']
+
+MEDIA_ROOT = BASE_DIR / 'media/'
+MEDIA_URL = '/media/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -144,10 +158,16 @@ AUTH_USER_MODEL = 'user.CustomUser'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
 }
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': datetime.timedelta(days=10),  # 10 kun
     'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=30),    # 30 kun
+}
+
+# swagger
+SWAGGER_SETTINGS = {
+    'DEFAULT_AUTO_SCHEMA_CLASS': 'drf_yasg.inspectors.SwaggerAutoSchema',
 }
