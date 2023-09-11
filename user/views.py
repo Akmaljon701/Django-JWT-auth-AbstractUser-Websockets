@@ -45,14 +45,7 @@ class IsmView(APIView):
     def post(self, request):
         serializer = IsmSerializer(data=request.data)
         if serializer.is_valid():
-            name = request.data.get('name')
-            rasm = request.data.get('rasm')
-
-            if rasm is not None:
-                rasm = f"{uuid.uuid4()}-{rasm}"  # Fayl nomini generatsiya qilish (hechqachon birhil bo'lmaydi shunda)
-                serializer.save(rasm=rasm)
-            else:
-                serializer.save()
+            serializer.save()
 
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
@@ -69,14 +62,12 @@ class IsmView(APIView):
 class IsmDeleteAPIView(APIView):
     @swagger_auto_schema(request_body=IdListSerializer)
     def delete(self, request):
-        # JSON formatida id lar listini olish
         serializer = IdListSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         ids_to_delete = serializer.validated_data['ids']
 
-        # Malumotlarni o'chirish
         Ism.objects.filter(id__in=ids_to_delete).delete()
 
         return Response({'message': 'Malumotlar o\'chirildi'}, status=status.HTTP_204_NO_CONTENT)
